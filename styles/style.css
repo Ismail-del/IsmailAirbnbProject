@@ -1,0 +1,7 @@
+@tailwind components;
+
+@layer components {
+  .button__search {
+    @apply border px-3 py-2 rounded-full shadow-md hover:bg-gray-100 cursor-pointer active:border-red-200 hover:scale-90 transform duration-500 ease-out;
+  }
+}

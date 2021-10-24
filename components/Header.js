@@ -1,9 +1,62 @@
-import Image from 'next/image'
+import Image from 'next/image';
+import { useState } from 'react';
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
+import { DateRangePicker } from 'react-date-range';
+import { useRouter } from 'next/dist/client/router';
 
-function Header() {
+function Header({ placeholder }) {
+
+    const router = useRouter();
+
+    const [searchInput, setSearchInput] = useState("");
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [numberGuest, setNumberGuest] = useState(1);
+
+    const selectionRange = {
+      startDate: startDate,
+      endDate: endDate,
+      key: 'selection',
+    }
+
+    const onSearchInputHandler = (e) => {
+        setSearchInput(e.target.value);
+    };
+
+    const numberGuestHandler = (event) => {
+        setNumberGuest(event.target.value)
+    }
+
+    const handleSelect = (ranges) => {
+        
+        setStartDate(ranges.selection.startDate);
+        setEndDate(ranges.selection.endDate);
+    }
+
+    const onCancelHandler = () => {
+        setSearchInput("");
+    }
+
+    const onMainPageHandler = () => {
+        router.push('/');
+    }
+
+    const onClickSearchPageHandler = () => {
+        router.push({
+            pathname:'/search',
+            query:{
+                location:searchInput,
+                startDate:startDate.toISOString(),
+                endDate:endDate.toISOString(),
+                numberGuest:numberGuest,
+            }
+        })
+    }
+
     return (
         <header className="sticky top-0 z-50 p-4 shadow-md grid grid-cols-3 md:px-8 bg-white">
-            <div className="relative h-10 flex items-center cursor-pointer">
+            <div onClick={onMainPageHandler} className="relative h-10 flex items-center cursor-pointer">
                 <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/2560px-Airbnb_Logo_B%C3%A9lo.svg.png"
                     layout='fill'
                     objectFit="contain"
@@ -12,7 +65,7 @@ function Header() {
             </div>
             {/* Search bar */}
             <div className="flex items-center shadow-md rounded-full">
-                <input className="text-gray-400 flex-grow outline-none pl-4" type="text" placeholder="Search"/>
+                <input value={placeholder || searchInput} onChange={onSearchInputHandler} className="text-gray-400 flex-grow outline-none pl-4 overflow-scroll" type="text" placeholder="Search"/>
                 <svg xmlns="http://www.w3.org/2000/svg" className="hidden md:inline-flex text-white h-8 w-8 bg-red-400 p-2 rounded-full cursor-pointer mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
@@ -33,6 +86,31 @@ function Header() {
                     </svg>
                 </div>
             </div>
+            {searchInput && 
+            <div className="col-span-3 mx-auto border-2 shadow-xl">
+                <DateRangePicker 
+                    ranges={[selectionRange]}
+                    onChange={handleSelect}
+                    rangeColors={['#FD5B61']}
+                    minDate={new Date()}
+                />
+            <div className="flex items-center">
+                <h1 className="text-xl font-bold ml-4 mb-3 flex-grow">Number of Guests</h1>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <input type="number" min={1} value={numberGuest}
+                    onChange={numberGuestHandler}
+                    className="w-10 mx-3 outline-none border-2 border-blue text-red-400"/>
+            </div>
+            <div className="flex my-3">
+                <button onClick={onCancelHandler} className="flex-grow">Cancel</button>
+                <button onClick={onClickSearchPageHandler} className="flex-grow text-red-500">Search</button>
+
+            </div>
+            </div>
+            
+            }
         </header>
     )
 }
