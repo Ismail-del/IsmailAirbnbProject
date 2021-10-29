@@ -3,11 +3,12 @@ import Footer from "../components/Footer"
 import Header from "../components/Header"
 import { format } from 'date-fns';
 import CardSearchDetail from "../components/CardSearchDetail";
+import Map from "../components/Map";
 
 function Search({ searchResult }) {
 
     const router = useRouter();
-    console.log("searchResult = ", searchResult)
+    
 
     const { location, startDate, endDate, numberGuest } = router.query;
 
@@ -22,7 +23,7 @@ function Search({ searchResult }) {
     return (
         <div>
             <Header placeholder={`${newStartDateFormat} to ${newEndDateFormat} for ${numberGuest}`}/>
-                <main>
+                <main className="flex flex-col xl:flex xl:flex-row xl:items-center">
                     <section className="pt-14 px-6">
                         <p className="border inline-block p-4 rounded-full hover:bg-gray-300 shadow-xl mb-7 text-lg font-bold">{`From ${newStartDateFormat} to ${newEndDateFormat} for ${numberGuest} people of guests`}</p>
                         <h1 className="text-2xl font-bold mb-4">Stays in {location}</h1>
@@ -46,6 +47,12 @@ function Search({ searchResult }) {
                                 />
                             ))}
                         </section>
+                    </section>
+                    <section className="mx-auto xl:min-w-[600px] overflow-scroll scrollbar-hide">
+                        <div className="h-[130rem]">
+                           <Map searchResult={searchResult}/> 
+                        </div>
+                        
                     </section>
                 </main>
             <Footer />
